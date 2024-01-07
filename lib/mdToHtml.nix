@@ -154,22 +154,24 @@ let
 
             effect()
 
+            // Refresh every 500ms for live editing
+            // "onchange" events only apply after focus is off
+            // TODO: use something nicer like CodeMirror
             if (${if cleanUp then "false" else "true"}) {
                 setInterval(effect, 500)
             }
-        </script>
 
-        <script id="clean-up">
-            <!-- Clean up -->
             if (${if cleanUp then "true" else "false"}) {
-                document.querySelector("#effect").remove()
+
+                // Clean up everything
                 document.querySelector("#content-md").remove()
                 document.querySelector("#cmark-load").remove()
                 document.querySelector("#hl-nix-load").remove()
                 document.querySelector("#hl-load").remove()
                 document.querySelector("#katex-auto-render-load").remove()
                 document.querySelector("#katex-load").remove()
-                document.querySelector("#clean-up").remove()
+                document.querySelector("#effect").remove()
+
             }
         </script>
         </body>
