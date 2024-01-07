@@ -110,16 +110,18 @@ let
         <footer>Built with <a href="https://github.com/kowale/rocs">Rocs</a></footer>
 
         ${if cleanUp then ''
-            <div style="width: 100%; height: 2em;"></div>
+        <div style="width: 100%; height: 2em;"></div>
         '' else ''
-            <div style="width: 100%; height: 20em;"></div>
+        <div style="width: 100%; height: 20em;"></div>
         ''}
 
+        ${let rootDir = if cleanUp then "" else rootDir; in ''
         <script id="hl-load" src="${rootDir}${imports."highlight.min.js".outPath}"></script>
         <script id="katex-load" src="${rootDir}${imports."katex".outPath}/katex.min.js"></script>
         <script id="katex-auto-render-load" src="${rootDir}${imports."katex".outPath}/contrib/auto-render.min.js"></script>
         <script id="cmark-load" src="${rootDir}${imports."commonmark.min.js".outPath}"></script>
         <script id="hl-nix-load" src="${rootDir}${imports."nix.min.js".outPath}"></script>
+        ''}
 
         <script id="effect">
 
