@@ -102,7 +102,7 @@ let
 
         <body>
         <div class="container">
-        <textarea ${if cleanUp then "hidden" else ""} type="text/markdown" id="content-md">
+        <textarea type="text/markdown" id="content-md">
         ${content}
         </textarea>
         <div id="content-html"></div>
@@ -110,9 +110,9 @@ let
         <footer>Built with <a href="https://github.com/kowale/rocs">Rocs</a></footer>
 
         ${if cleanUp then ''
-            <div style="width: 100%; height: 2em;"
+            <div style="width: 100%; height: 2em;">
         '' else ''
-            <div style="width: 100%; height: 20em;"
+            <div style="width: 100%; height: 20em;">
         ''}
 
         <script id="hl-load" src="${rootDir}${imports."highlight.min.js".outPath}"></script>
