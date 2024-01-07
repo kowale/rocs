@@ -28,7 +28,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Build server and client
         run: |
-          nix build .#docs
+          nix build .#forPages
       - name: Post build hook
         run: |
           cp -rL --no-preserve=mode,ownership result public
