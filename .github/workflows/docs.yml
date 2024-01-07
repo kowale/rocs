@@ -1,0 +1,30 @@
+name: Build docs and deploy to Pages
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  REPOSITORY: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Pre Nix install hook
+        run: |
+          uname -a
+          whoami
+          pwd
+          ls -lah
+          echo $REPOSITORY
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Build server and client
+        run: |
+          nix build .#docs
+      - name: Post build hook
+        run: |
+          cp --recursive --dereference --no-preserve=mode,ownership result public
+      
