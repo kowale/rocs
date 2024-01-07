@@ -1,12 +1,20 @@
-# This is an implementation of fileToDrv
-# content is raw string of what's inside the file
-# name is the target name like "thing.html"
-# dir is the target location like "some/where"
-# Returns derivation for "some/where/thing.html"
+/*
+
+This file implements fileToDrv used in buildSite.
+Returns a derivation for a composable subtree.
+Suppose we want to render ./some/thing.md
+to kowale.github.io/rocs/some/thing.html
+
+- `content` is text of ./some/thing.md/
+- `rootDir` is where we deploy - rocs/
+- `dir` is target location - some/
+- `name` is target file name - thing.html
+
+*/
 
 { pkgs }:
 
-{ content, name, dir }:
+{ content, rootDir, dir, name }:
 
 let
 
@@ -59,11 +67,6 @@ let
             justify-content: center;
             gap: 1em;
         }
-
-        .vertical {
-            width: 100%;
-            height: 100em;
-        }
     '';
 
     iconSvgXml = ''
@@ -78,24 +81,25 @@ let
     # TODO: add sha384 of files to their integrity field
     imports = pkgs.callPackage ./imports.nix {};
 
-    htmlTemplate = content: cleanUp: ''
+    htmlTemplate = { content, rootDir, dir, name, cleanUp }: ''
 
         <!DOCTYPE html>
         <html>
         <head>
         <meta charset="utf-8">
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-        <link rel="icon" href="data:image/svg+xml,${iconSvgXml}">
+        <meta name="path" content="${rootDir}/${dir}${name}">
+        <meta http-equiv="content-type" content="text/html">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; user-scalable=yes">
+
         <title></title>
-
-        <link rel="stylesheet" href="${imports."sunburst.min.css".outPath}">
-        <link rel="stylesheet" href="${imports."katex".outPath}/katex.min.css">
-
+        <link rel="icon" href="data:image/svg+xml,${iconSvgXml}">
+        <link rel="stylesheet" href="${rootDir}${imports."sunburst.min.css".outPath}">
+        <link rel="stylesheet" href="${rootDir}${imports."katex".outPath}/katex.min.css">
         <style>
         ${css}
         </style>
         </head>
+
         <body>
         <div class="container">
         <textarea ${if cleanUp then "hidden" else ""} type="text/markdown" id="content-md">
@@ -103,15 +107,19 @@ let
         </textarea>
         <div id="content-html"></div>
         </div>
-        <footer>Built with <a href="https://github.com/kowale/rocs">rocs</a></footer>
+        <footer>Built with <a href="https://github.com/kowale/rocs">Rocs</a></footer>
 
-        ${if cleanUp then "" else ''<div class="vertical"></div>''}
+        ${if cleanUp then ''
+            <div style="width: 100%; height: 2em;"
+        '' else ''
+            <div style="width: 100%; height: 20em;"
+        ''}
 
-        <script id="hl-load" src="${imports."highlight.min.js".outPath}"></script>
-        <script id="katex-load" src="${imports."katex".outPath}/katex.min.js"></script>
-        <script id="katex-auto-render-load" src="${imports."katex".outPath}/contrib/auto-render.min.js"></script>
-        <script id="cmark-load" src="${imports."commonmark.min.js".outPath}"></script>
-        <script id="hl-nix-load" src="${imports."nix.min.js".outPath}"></script>
+        <script id="hl-load" src="${rootDir}${imports."highlight.min.js".outPath}"></script>
+        <script id="katex-load" src="${rootDir}${imports."katex".outPath}/katex.min.js"></script>
+        <script id="katex-auto-render-load" src="${rootDir}${imports."katex".outPath}/contrib/auto-render.min.js"></script>
+        <script id="cmark-load" src="${rootDir}${imports."commonmark.min.js".outPath}"></script>
+        <script id="hl-nix-load" src="${rootDir}${imports."nix.min.js".outPath}"></script>
 
         <script id="effect">
 
@@ -172,10 +180,10 @@ in
 
     pkgs.stdenv.mkDerivation {
 
-        inherit content name dir;
+        inherit name content rootDir dir;
 
-        ir = htmlTemplate content false;
-        irClean = htmlTemplate content true;
+        ir = htmlTemplate { inherit content rootDir dir name; cleanUp = false; };
+        irClean = htmlTemplate { inherit content rootDir dir name; cleanUp = true; };
 
         # Stop asking cache for builds
         allowSubstitutes = false;
@@ -193,13 +201,12 @@ in
 
         buildCommand = ''
 
-            mkdir -p $out/dynamic/$dir
-            mkdir -p $out/static/$dir
+            mkdir -p $out/$dir
+            mkdir -p $out/_/$dir
 
             cp $irPath ir.html
             cp $irCleanPath irClean.html
-
-            cp ir.html $out/dynamic/$dir/$name
+            cp ir.html $out/_/$dir/$name
 
             chromium \
                 --no-first-run \
@@ -237,7 +244,7 @@ in
                 --headless \
                 --disable-gpu \
                 --dump-dom \
-                irClean.html > $out/static/$dir/$name
+                irClean.html > $out/$dir/$name
 
         '';
     }

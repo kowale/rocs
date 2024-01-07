@@ -11,8 +11,14 @@
     in {
 
         packages.${system} = rec {
+
             default = buildSite { inherit pkgs; root = self.outPath; };
-            docs = default;
+
+            forPages = buildSite {
+                inherit pkgs;
+                root = self.outPath;
+                rootDir = "/rocs";
+            };
         };
 
         apps.${system}.default = {

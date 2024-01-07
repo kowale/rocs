@@ -1,4 +1,4 @@
-{ root, pkgs }:
+{ root, pkgs, rootDir ? "" }:
 
 with builtins;
 
@@ -27,10 +27,14 @@ let
                     (toString path)
                 );
 
-                _k = substring 0 (sub (stringLength k) 3) k;
+                # TODO: generalise to more than .md lol
+                nameWithoutMd = substring 0 (sub (stringLength k) 3) k;
 
             # Return a derivation
-            in fileToDrv { inherit content dir; name = "${_k}.html"; };
+            in fileToDrv {
+                inherit content rootDir dir;
+                name = "${nameWithoutMd}.html";
+            };
 
     in
 
