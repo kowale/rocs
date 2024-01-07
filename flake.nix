@@ -10,7 +10,10 @@
 
     in {
 
-        packages.${system}.default = buildSite { inherit pkgs; root = self.outPath; };
+        packages.${system} = rec {
+            default = buildSite { inherit pkgs; root = self.outPath; };
+            docs = default;
+        };
 
         apps.${system}.default = {
             type = "app";
@@ -21,7 +24,6 @@
 
             '').outPath;
         };
-
 
         # Can I ship functions in a flake?
         lib = { inherit buildSite; };
