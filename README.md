@@ -131,7 +131,5 @@ which image maintainer carefully arranged
 with imperative apt-get incantations.
 It may be repeatable for a few months,
 but will eventually stop building.
-Then I need to keep the container image.
-And mind you, there is virtually no deduplication between images.
-There are layers, but there can be only 42.
-
+Then I need to keep the container image,
+and I can only compose them from a limited number of layers.
