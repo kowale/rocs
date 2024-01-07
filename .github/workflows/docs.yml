@@ -5,7 +5,12 @@ on:
   workflow_dispatch:
 
 env:
-  REPOSITORY: ${{ github.repository }}
+  REPO_PATH: ${{ github.repository }}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -18,7 +23,7 @@ jobs:
           whoami
           pwd
           ls -lah
-          echo $REPOSITORY
+          env
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Build server and client
@@ -27,7 +32,8 @@ jobs:
       - name: Post build hook
         run: |
           cp -rL --no-preserve=mode,ownership result public
-      - uses: actions/upload-pages-artifact@v2.0.0
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: public
-      - uses: actions/deploy-pages@v3.0.1
+      - uses: actions/deploy-pages@v4
