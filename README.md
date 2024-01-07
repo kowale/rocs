@@ -6,6 +6,29 @@ powered by Nix and web browsers.
 
 ## Example
 
+To add to your repository,
+if you are using flakes
+
+```nix
+{
+    inputs = {
+        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+        rocs.url = "github:kowale/rocs";
+    };
+    outputs = { self, nixpkgs, rocs, ... } @ inputs:
+    let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs { inherit system; };
+        
+    in {
+        packages.${system}.docs = rocs.lib.buildSite {
+            inherit pkgs;
+            root = ./.;
+        };
+    }
+}
+```
+
 To build docs in this repository
 
 ```sh
