@@ -110,9 +110,9 @@ let
         <footer>Built with <a href="https://github.com/kowale/rocs">Rocs</a></footer>
 
         ${if cleanUp then ''
-            <div style="width: 100%; height: 2em;">
+            <div style="width: 100%; height: 2em;"></div>
         '' else ''
-            <div style="width: 100%; height: 20em;">
+            <div style="width: 100%; height: 20em;"></div>
         ''}
 
         <script id="hl-load" src="${rootDir}${imports."highlight.min.js".outPath}"></script>
@@ -174,6 +174,7 @@ let
 
             }
         </script>
+
         </body>
         </html>
     '';
