@@ -138,7 +138,7 @@ let
 
                 document.querySelector("#content-html").innerHTML = rendered
                 const firstHeading = document.querySelector("#content-html").querySelector("h1")
-                if (firstHeading == null) {
+                if (firstHeading != null) {
                     document.title = firstHeading.innerText
                 } else {
                     document.title = "Untitled"
