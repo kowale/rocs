@@ -138,7 +138,11 @@ let
 
                 document.querySelector("#content-html").innerHTML = rendered
                 const firstHeading = document.querySelector("#content-html").querySelector("h1")
-                document.title = firstHeading.innerText
+                if (firstHeading == null) {
+                    document.title = firstHeading.innerText
+                } else {
+                    document.title = "Untitled"
+                }
 
                 hljs.highlightAll()
 
