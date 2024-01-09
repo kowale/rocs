@@ -25,6 +25,17 @@ jobs:
           ls -lah
           env
       - uses: DeterminateSystems/nix-installer-action@v4
+        with:
+          extra-conf: |
+            keep-outputs = true
+            keep-derivations = true
+      - name: Post Nix install hook
+        run: |
+          uname -a
+          whoami
+          pwd
+          ls -lah
+          env
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Build server and client
         run: |
