@@ -103,7 +103,7 @@ let
 
         <body>
         <nav>
-        <a href="/index.html">Index</a>
+        <a href="${rootDir}/index.html">Index</a>
         &mdash;
         <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
         </nav>
