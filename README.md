@@ -19,7 +19,7 @@ if you are using flakes
     let
         system = "x86_64-linux";
         pkgs = import nixpkgs { inherit system; };
-        
+
     in {
         packages.${system}.docs = rocs.lib.buildSite {
             inherit pkgs;
@@ -35,33 +35,29 @@ To build docs in this repository
 nix build github:kowale/rocs -vv
 ```
 
-Result is made of symlinks,
-but we can realise it with tar or cp
+The `result` is a symlink to the web root.
+You can open `result/index.html` in a browser,
+or serve it over HTTP.
+
+```
+python3 -m http.server 8000 -d result/
+```
+
+We can realise it with tar or cp
 if we need real files to deploy.
 
 ```sh
 tar czfh result.tar.gz result/
 ```
 
-Or we can serve files directly
-from the Nix store in Python.
-
-```sh
-nix run github:kowale/rocs -L
-```
-
-Running these again will be instant,
-thanks to flake evaluation caching.
 If you change one file,
 only it will need a rebuild.
-Now, you can visit localhost:8985
-to see three top-level directories.
 
-1. /static --- pure, minimal HTML
-2. /dynamic --- side-by-side live editing
-3. /nix/store --- dependencies and assets
+1. `/` - pure, minimal HTML and CSS (no JS)
+2. `/_/` - side-by-side live editing (with JS)
+3. `/nix/store` - dependencies and assets
 
-## How this works
+## How does it work?
 
 Nix reads a Git repository at evaluation.
 Each Markdown file becomes a derivation
@@ -91,14 +87,14 @@ and evaluate JavaScript.
 
 ## Live preview
 
-As mentioned, /dynamic stores
+As mentioned, `/_/` stores
 an intermediate HTML representation
 that provides side-by-side live editing.
 This can be useful for live demos,
 contributions from non-technical people,
-and debugging final HTML in /static.
+and debugging final HTML in `/`.
 I would like to add fallback URLs as an importmap
-so that if /nix/store is missing,
+so that if `/nix/store` is missing,
 it will still render, impurely.
 
 Going into a devShell of buildSide derivation
@@ -106,7 +102,7 @@ brings you into a shell with buildPhase.
 REPL can be used to rebuild a page proper.
 See /lib/editSite.nix for an example.
 
-## Why browsers?
+## Why web browsers?
 
 Browsers are great at manipulating the DOM.
 It's easy to save the final DOM with a headless browser.
