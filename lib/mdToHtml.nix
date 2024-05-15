@@ -12,7 +12,7 @@ to kowale.github.io/rocs/some/thing.html
 
 */
 
-{ pkgs, root }:
+{ pkgs, root, emoji ? "🎒" }:
 
 { content, rootDir, dir, name }:
 
@@ -74,7 +74,7 @@ let
             xmlns=%22http://www.w3.org/2000/svg%22
             viewBox=%220 0 100 100%22
         >
-        <text y=%22.9em%22 font-size=%2290%22>🎒</text>
+        <text y=%22.9em%22 font-size=%2290%22>${emoji}</text>
         </svg>
     '';
 
