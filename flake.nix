@@ -10,17 +10,11 @@
 
     in {
 
-        packages.${system} = rec {
+        packages.${system} = {
 
             default = buildSite {
                 inherit pkgs;
                 root = self.outPath;
-            };
-
-            forResult = buildSite {
-                inherit pkgs;
-                root = self.outPath;
-                rootDir = "/result";
             };
 
             forPages = buildSite {

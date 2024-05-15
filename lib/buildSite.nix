@@ -1,4 +1,4 @@
-{ root, pkgs, rootDir ? "" }:
+{ root, pkgs, rootDir ? "", local ? "" }:
 
 with builtins;
 
@@ -55,14 +55,27 @@ let
 
         ) children;
 
-    # Implementation of fileToDrv
-    mdToHtml = import ./mdToHtml.nix { inherit pkgs; };
-
     # Utility to filter by file extensions
     hasExtension = ext: k: match "(.*?).${ext}" k != null;
 
     # Utility for checking if attrset is a derivation
     isDerivation = attr: attr ? type && attr.type == "derivation";
+
+    # Add local dependecies/assets
+    # Import paths relative to root
+    # If you include the whole root,
+    # you will lose atomic rebuilds per file
+    # (as each file will depend on all other files)
+    addLocal = path: pkgs.runCommand "addLocal" {} ''
+        mkdir -p $out
+        cp -r ${toString root}/${path} $out
+    '';
+
+    # Fixed output derivations
+    imports = pkgs.callPackage ./imports.nix {};
+
+    # Implementation of fileToDrv
+    mdToHtml = import ./mdToHtml.nix { inherit pkgs root; };
 
     # An example of putting it all together
     # TODO: expose nameFilter and fileToDrv in flake
@@ -78,28 +91,11 @@ let
         # Extract directory derivations from the tree
         drvs = pkgs.lib.attrsets.collect isDerivation tree;
 
-        # Fixed output derivations for assets like CSS and JS
-        assets = let
-            imports = pkgs.callPackage ./imports.nix {};
-        in
-            map (
-                # Need to turn files into dirs with files
-                # TODO: make this a little less terrible
-                # Maybe at least inline external CSS in static
-                file: pkgs.runCommand "linkAssets" {} ''
-
-                    mkdir -p $out/nix/store
-                    cp -r ${file.outPath} $out/nix/store
-
-                ''
-            ) (pkgs.lib.attrsets.collect isDerivation imports);
-
-
         # Put them all as symlinks in one directory
         # Requires the derivations to be directories
         in pkgs.symlinkJoin {
             name = "all";
-            paths = drvs ++ assets;
+            paths = drvs ++ imports ++ [ (addLocal local) ];
         };
 
     site = buildSite root;

@@ -12,7 +12,7 @@ to kowale.github.io/rocs/some/thing.html
 
 */
 
-{ pkgs }:
+{ pkgs, root }:
 
 { content, rootDir, dir, name }:
 
@@ -79,7 +79,8 @@ let
     '';
 
     # TODO: add sha384 of files to their integrity field
-    imports = pkgs.callPackage ./imports.nix {};
+
+    imports = (builtins.elemAt (pkgs.callPackage ./imports.nix {}) 0).imports;
 
     htmlTemplate = { content, rootDir, dir, name, cleanUp }: ''
 
@@ -87,7 +88,7 @@ let
         <html>
         <head>
         <meta charset="utf-8">
-        <meta name="path" content="${rootDir}/${dir}${name}">
+        <meta name="path" content="${rootDir}${dir}/${name}">
         <meta http-equiv="content-type" content="text/html">
         <meta name="viewport" content="width=device-width; initial-scale=1.0; user-scalable=yes">
 
@@ -101,13 +102,22 @@ let
         </head>
 
         <body>
+        <nav>
+        <a href="/">Index</a>
+        &mdash;
+        <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
+        </nav>
         <div class="container">
         <textarea type="text/markdown" id="content-md">
         ${content}
         </textarea>
         <div id="content-html"></div>
         </div>
-        <footer>Built with <a href="https://github.com/kowale/rocs">Rocs</a></footer>
+        <footer>
+        /nix/store/some-hash
+        &mdash;
+        <a href="https://github.com/kowale/rocs">Rocs</a>
+        </footer>
 
         ${if cleanUp then ''
         <div style="width: 100%; height: 2em;"></div>
@@ -132,26 +142,32 @@ let
 
                 console.log("Running effect")
 
+                // Render CommonMark to HTML
                 const content = document.querySelector("#content-md").value
                 const parsed = reader.parse(content)
                 const rendered = writer.render(parsed)
-
                 document.querySelector("#content-html").innerHTML = rendered
+
+                // Set title from <h1>
                 const firstHeading = document.querySelector("#content-html").querySelector("h1")
                 if (firstHeading != null) {
                     document.title = firstHeading.innerText
-                } else {
-                    document.title = "Untitled"
                 }
 
+                // Replace all links to .md with links to .html
+                document.querySelectorAll("a").forEach( ( a ) => { a.href = a.href.replace(".md", ".html") } )
+
+                // Highlight
                 hljs.highlightAll()
 
+                // KaTeX
                 renderMathInElement(
                     document.body,
                     {
                         delimiters: [
                             {left: "$$", right: "$$", display: true},
                             {left: "$", right: "$", display: false},
+                            {left: "\\begin{CD}", right: "\\end{CD}", display: true},
                         ],
                         throwOnError: true
                     }
@@ -185,11 +201,13 @@ let
         </html>
     '';
 
+    importsJoin = pkgs.symlinkJoin { name = "imports"; paths = (pkgs.callPackage ./imports.nix {}); };
+
 in
 
     pkgs.stdenv.mkDerivation {
 
-        inherit name content rootDir dir;
+        inherit name content rootDir dir importsJoin;
 
         ir = htmlTemplate { inherit content rootDir dir name; cleanUp = false; };
         irClean = htmlTemplate { inherit content rootDir dir name; cleanUp = true; };
@@ -198,17 +216,19 @@ in
         allowSubstitutes = false;
 
         # Content may be too big for env
-        passAsFile = [ "content" "ir" "irClean" ];
+        passAsFile = [ "content" "ir" "irClean" "importsJoin" ];
 
-        nativeBuildInputs = with pkgs; [
-            chromium
-        ];
+        # TODO: firefox
+        nativeBuildInputs = with pkgs; [ chromium ];
 
         # Chromium reads impure location at runtime
         FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
         FONTCONFIG_PATH="${pkgs.fontconfig.out}/etc/fonts/";
 
         buildCommand = ''
+            set -eou pipefail
+
+            echo $dir $name
 
             mkdir -p $out/$dir
             mkdir -p $out/_/$dir
@@ -216,6 +236,10 @@ in
             cp $irPath ir.html
             cp $irCleanPath irClean.html
             cp ir.html $out/_/$dir/$name
+
+            ln -s ${toString importsJoin}/nix nix
+
+            ${pkgs.python3}/bin/python3 -m http.server 8000 &
 
             chromium \
                 --no-first-run \
@@ -253,7 +277,12 @@ in
                 --headless \
                 --disable-gpu \
                 --dump-dom \
-                irClean.html > $out/$dir/$name
+                http://0.0.0.0:8000/irClean.html > tmp
 
+                cat tmp > $out/$dir/$name
+                ${if (dir == "" && name == "README.html") then "
+                    cat tmp > $out/index.html
+                " else "" }
+                kill $!
         '';
     }
