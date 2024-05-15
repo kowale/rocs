@@ -92,6 +92,8 @@ let
         <meta http-equiv="content-type" content="text/html">
         <meta name="viewport" content="width=device-width; initial-scale=1.0; user-scalable=yes">
 
+        <!-- Generated with https://github.com/kowale/rocs -->
+
         <title></title>
         <link rel="icon" href="data:image/svg+xml,${iconSvgXml}">
         <link rel="stylesheet" href="${rootDir}${imports."sunburst.min.css".outPath}">
@@ -113,11 +115,6 @@ let
         </textarea>
         <div id="content-html"></div>
         </div>
-        <footer>
-        /nix/store/some-hash
-        &mdash;
-        <a href="https://github.com/kowale/rocs">Rocs</a>
-        </footer>
 
         ${if cleanUp then ''
         <div style="width: 100%; height: 2em;"></div>
