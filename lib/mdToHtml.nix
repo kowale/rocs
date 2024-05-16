@@ -276,6 +276,11 @@ in
                 --dump-dom \
                 http://0.0.0.0:8000/irClean.html | ${pkgs.sd}/bin/sd 'http://0.0.0.0:8000' "" > tmp
 
+                # Mysteriously Chromium sometimes returns only <html><body></body></html>
+                if (( $(cat tmp | wc -c) < 100 )); then
+                    exit 1
+                fi
+
                 cat tmp > $out/$dir/$name
                 ${if (dir == "" && name == "README.html") then "
                     cat tmp > $out/index.html
