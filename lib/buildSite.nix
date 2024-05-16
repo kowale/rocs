@@ -68,7 +68,7 @@ let
     # (as each file will depend on all other files)
     addLocal = path: pkgs.runCommand "addLocal" {} ''
         mkdir -p $out
-        cp -r ${toString root}/${path} $out
+        ${if path == "" then "echo cp" else "cp"} -r ${toString root}/${path} $out
     '';
 
     # Fixed output derivations
