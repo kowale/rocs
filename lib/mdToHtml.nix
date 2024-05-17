@@ -226,10 +226,21 @@ let
                     document.title = firstHeading.innerText
                 }
 
+                // Add section anchors
+                document.querySelectorAll("h2").forEach( ( h ) => {
+                    h.id = h.innerText
+                        .toLowerCase()
+                        .trim()
+                        .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                        .replace(/[^a-z0-9\s-]/g, ' ').trim()
+                        .replace(/[\s-]+/g, '-')
+                } )
+
                 // Replace all links to .md with links to .html
                 document.querySelectorAll("a").forEach( ( a ) => { a.href = a.href.replace(".md", ".html") } )
 
                 // Highlight
+                hljs.configure({ languages: [ "plaintext" ] })
                 hljs.highlightAll()
 
                 // KaTeX
