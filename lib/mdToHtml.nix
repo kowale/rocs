@@ -12,38 +12,107 @@ to kowale.github.io/rocs/some/thing.html
 
 */
 
-{ pkgs, root, emoji ? "🎒" }:
+{ pkgs, root, emoji ? "🎒", css ? "" }:
 
 { content, rootDir, dir, name }:
 
 let
 
-    css = ''
+    defaultCss = ''
+
+        /*
+        https://www.joshwcomeau.com/css/custom-css-reset/
+        https://piccalil.li/blog/a-more-modern-css-reset/
+        */
+
         html {
-            background: #fff;
+          --text-color-normal: #0a244d;
+          --text-color-light: #8cabd9;
         }
 
+        html[data-theme='dark'] {
+          --text-color-normal: hsl(210, 10%, 62%);
+          --text-color-light: hsl(210, 15%, 35%);
+          --text-color-richer: hsl(210, 50%, 72%);
+          --text-color-highlight: hsl(25, 70%, 45%);
+        }
+
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
+        #root, #__next {
+          isolation: isolate;
+        }
+
+        img, picture, video {
+          max-width: 100%;
+          margin: 0 auto;
+          display: block;
+        }
+
+        input, button, textarea, select {
+          font: inherit;
+        }
+
+        p, h1, h2, h3, h4, h5, h6 {
+          overflow-wrap: break-word;
+        }
+
+        html {
+          -moz-text-size-adjust: none;
+          -webkit-text-size-adjust: none;
+          text-size-adjust: none;
+        }
+
+
+        body, h1, h2, h3, h4, p,
+        figure, blockquote, dl, dd {
+          margin-block-end: 0;
+        }
+
+        ul[role='list'],
+        ol[role='list'] {
+          list-style: none;
+        }
+
+        h1, h2, h3, h4,
+        button, input, label {
+          line-height: 1.1;
+        }
+
+        h1, h2,
+        h3, h4 {
+          text-wrap: balance;
+        }
+
+        input, button,
+        textarea, select {
+          font-family: inherit;
+          font-size: inherit;
+        }
+
+        textarea {
+          overflow-y: scroll !important;
+          resize: none;
+        }
+
+        textarea:not([rows]) {
+          min-height: 10em;
+          padding: 0.5em;
+          margin: 0.5em;
+        }
+
+        :target {
+          scroll-margin-block: 5ex;
+        }
 
         body {
             line-height: 1.5;
+            min-height: 100vh;
             margin: 0 auto;
             padding: 1em;
             font-family: sans-serif;
-        }
-
-        pre {
-            overflow-x: auto;
-        }
-
-        img {
-            max-width: 100%;
-            margin: 0 auto;
-            display: block;
-        }
-
-        footer {
-            padding-top: 1em;
-            text-align: center;
         }
 
         #content-md {
@@ -67,6 +136,7 @@ let
             justify-content: center;
             gap: 1em;
         }
+
     '';
 
     iconSvgXml = ''
@@ -99,15 +169,20 @@ let
         <link rel="stylesheet" href="${rootDir}${imports."sunburst.min.css".outPath}">
         <link rel="stylesheet" href="${rootDir}${imports."katex".outPath}/katex.min.css">
         <style>
+        ${defaultCss}
         ${css}
         </style>
         </head>
 
         <body>
         <nav>
-        <a href="${rootDir}/index.html">Index</a>
+        <a href="${rootDir}/index.html">${emoji}</a>
         &mdash;
         <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
+        ${if cleanUp then "&mdash;" else ""}
+        <a href='${if cleanUp then "${rootDir}_${dir}/${name}" else ""}'>
+        ${if cleanUp then "Edit" else ""}
+        </a>
         </nav>
         <div class="container">
         <textarea type="text/markdown" id="content-md">
