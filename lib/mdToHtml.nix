@@ -66,10 +66,12 @@ let
         }
 
 
+        /*
         body, h1, h2, h3, h4, p,
         figure, blockquote, dl, dd {
           margin-block-end: 0;
         }
+        */
 
         ul[role='list'],
         ol[role='list'] {
