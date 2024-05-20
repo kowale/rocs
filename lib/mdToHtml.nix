@@ -179,14 +179,6 @@ let
           background: var(--c6) !important;
         }
 
-        img {
-          filter: brightness(70%);
-        }
-
-        img:hover {
-          filter: brightness(100%);
-        }
-
     '';
 
     iconSvgXml = ''
