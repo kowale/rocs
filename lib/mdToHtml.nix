@@ -18,24 +18,13 @@ to kowale.github.io/rocs/some/thing.html
 
 let
 
+    # TODO: move to static imports
     defaultCss = ''
 
         /*
         https://www.joshwcomeau.com/css/custom-css-reset/
         https://piccalil.li/blog/a-more-modern-css-reset/
         */
-
-        html {
-          --text-color-normal: #0a244d;
-          --text-color-light: #8cabd9;
-        }
-
-        html[data-theme='dark'] {
-          --text-color-normal: hsl(210, 10%, 62%);
-          --text-color-light: hsl(210, 15%, 35%);
-          --text-color-richer: hsl(210, 50%, 72%);
-          --text-color-highlight: hsl(25, 70%, 45%);
-        }
 
         *, *::before, *::after {
           box-sizing: border-box;
@@ -137,6 +126,65 @@ let
             flex-direction: row;
             justify-content: center;
             gap: 1em;
+        }
+
+        nav {
+          max-width: 35em;
+          margin: 0 auto;
+        }
+
+        /* https://www.reasonable.work/colors/#colors */
+
+        * {
+          --c1: #f7f1ff;
+          --c2: #e2e2e2;
+          --c3: #0094b4;
+          --c4: #007590;
+          --c5: #3e3e3e;
+          --c6: #222222;
+        }
+
+        body {
+          color: var(--c2);
+          background: var(--c5);
+        }
+
+        a {
+          color: var(--c1);
+          text-decoration: underline;
+        }
+
+        a:hover {
+          color: var(--c5);
+          background: var(--c1);
+          text-decoration: none;
+        }
+
+        textarea {
+          color: var(--c1);
+          background: var(--c6);
+        }
+
+        blockquote {
+          color: var(--c1);
+          background: var(--c6);
+        }
+
+        blockquote > p {
+          padding: 1em;
+        }
+
+        pre > code {
+          font-family: monospace !important;
+          background: var(--c6) !important;
+        }
+
+        img {
+          filter: brightness(70%);
+        }
+
+        img:hover {
+          filter: brightness(100%);
         }
 
     '';
