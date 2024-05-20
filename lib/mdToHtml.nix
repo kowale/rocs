@@ -222,7 +222,7 @@ let
         &mdash;
         <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
         ${if cleanUp then "&mdash;" else ""}
-        <a href='${if cleanUp then "${rootDir}_${dir}/${name}" else ""}'>
+        <a href='${if cleanUp then "${rootDir}/_${dir}/${name}" else ""}'>
         ${if cleanUp then "Edit" else ""}
         </a>
         </nav>
