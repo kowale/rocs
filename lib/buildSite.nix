@@ -1,4 +1,4 @@
-{ root, pkgs, rootDir ? "", local ? "", emoji ? "🎒", css ? "" }:
+{ root, pkgs, rootDir ? "", local ? "", emoji ? "🎒", css ? "", js ? "" }:
 
 with builtins;
 
@@ -75,7 +75,7 @@ let
     imports = pkgs.callPackage ./imports.nix {};
 
     # Implementation of fileToDrv
-    mdToHtml = import ./mdToHtml.nix { inherit pkgs root emoji css; };
+    mdToHtml = import ./mdToHtml.nix { inherit pkgs root emoji css js; };
 
     # An example of putting it all together
     # TODO: expose nameFilter and fileToDrv in flake

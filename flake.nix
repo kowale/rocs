@@ -15,6 +15,8 @@
             default = buildSite {
                 inherit pkgs;
                 root = self.outPath;
+                css = ''/* extra css */'';
+                js = ''// extra effect'';
             };
 
             forPages = buildSite {

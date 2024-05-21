@@ -12,174 +12,11 @@ to kowale.github.io/rocs/some/thing.html
 
 */
 
-{ pkgs, root, emoji ? "🎒", css ? "" }:
+{ pkgs, root, emoji ? "🎒", css ? "", js ? "" }:
 
 { content, rootDir, dir, name }:
 
 let
-
-    # TODO: move to static imports
-    defaultCss = ''
-
-        /*
-        https://www.joshwcomeau.com/css/custom-css-reset/
-        https://piccalil.li/blog/a-more-modern-css-reset/
-        */
-
-        *, *::before, *::after {
-          box-sizing: border-box;
-        }
-
-        #root, #__next {
-          isolation: isolate;
-        }
-
-        img, picture, video {
-          max-width: 100%;
-          margin: 0 auto;
-          display: block;
-        }
-
-        input, button, textarea, select {
-          font: inherit;
-        }
-
-        p, h1, h2, h3, h4, h5, h6 {
-          overflow-wrap: break-word;
-        }
-
-        html {
-          -moz-text-size-adjust: none;
-          -webkit-text-size-adjust: none;
-          text-size-adjust: none;
-        }
-
-
-        /*
-        body, h1, h2, h3, h4, p,
-        figure, blockquote, dl, dd {
-          margin-block-end: 0;
-        }
-        */
-
-        ul[role='list'],
-        ol[role='list'] {
-          list-style: none;
-        }
-
-        h1, h2, h3, h4,
-        button, input, label {
-          line-height: 1.1;
-        }
-
-        h1, h2,
-        h3, h4 {
-          text-wrap: balance;
-        }
-
-        input, button,
-        textarea, select {
-          font-family: inherit;
-          font-size: inherit;
-        }
-
-        textarea {
-          overflow-y: scroll !important;
-          resize: none;
-        }
-
-        textarea:not([rows]) {
-          min-height: 10em;
-          padding: 0.5em;
-          margin: 0.5em;
-        }
-
-        :target {
-          scroll-margin-block: 5ex;
-        }
-
-        body {
-            line-height: 1.5;
-            min-height: 100vh;
-            margin: 0 auto;
-            padding: 1em;
-            font-family: sans-serif;
-        }
-
-        #content-md {
-            flex: 1;
-            width: 50%;
-            max-width: 35em;
-            overflow: hidden;
-            resize: none;
-            border: 0;
-        }
-
-        #content-html {
-            flex: 1;
-            max-width: 35em;
-            width: 50%;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 1em;
-        }
-
-        nav {
-          max-width: 35em;
-          margin: 0 auto;
-        }
-
-        /* https://www.reasonable.work/colors/#colors */
-
-        * {
-          --c1: #f7f1ff;
-          --c2: #e2e2e2;
-          --c3: #0094b4;
-          --c4: #007590;
-          --c5: #3e3e3e;
-          --c6: #222222;
-        }
-
-        body {
-          color: var(--c2);
-          background: var(--c5);
-        }
-
-        a {
-          color: var(--c1);
-          text-decoration: underline;
-        }
-
-        a:hover {
-          color: var(--c5);
-          background: var(--c1);
-          text-decoration: none;
-        }
-
-        textarea {
-          color: var(--c1);
-          background: var(--c6);
-        }
-
-        blockquote {
-          color: var(--c1);
-          background: var(--c6);
-        }
-
-        blockquote > p {
-          padding: 1em;
-        }
-
-        pre > code {
-          font-family: monospace !important;
-          background: var(--c6) !important;
-        }
-
-    '';
 
     iconSvgXml = ''
         <svg
@@ -194,7 +31,20 @@ let
 
     imports = (builtins.elemAt (pkgs.callPackage ./imports.nix {}) 0).imports;
 
-    htmlTemplate = { content, rootDir, dir, name, cleanUp }: ''
+    htmlTemplate = { content, rootDir, dir, name, cleanUp }: let nav = ''
+
+        <nav>
+        <a style="text-decoration: none;" href="${rootDir}/index.html">${emoji}</a>
+        &mdash;
+        <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
+        ${if cleanUp then "&mdash;" else ""}
+        <a href='${if cleanUp then "${rootDir}/_${dir}/${name}" else ""}'>
+        ${if cleanUp then "Edit" else ""}
+        </a>
+        </nav>
+        '';
+
+    in ''
 
         <!DOCTYPE html>
         <html>
@@ -209,32 +59,22 @@ let
         <title></title>
         <link rel="icon" href="data:image/svg+xml,${iconSvgXml}">
         <link rel="stylesheet" href="${rootDir}${imports."sunburst.min.css".outPath}">
+        <link rel="stylesheet" href="${rootDir}${imports."style.css".outPath}">
         <link rel="stylesheet" href="${rootDir}${imports."katex".outPath}/katex.min.css">
-        <style>
-        ${defaultCss}
-        ${css}
-        </style>
+        <style>${css}</style>
         </head>
 
         <body>
-        <nav>
-        <a href="${rootDir}/index.html">${emoji}</a>
-        &mdash;
-        <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
-        ${if cleanUp then "&mdash;" else ""}
-        <a href='${if cleanUp then "${rootDir}/_${dir}/${name}" else ""}'>
-        ${if cleanUp then "Edit" else ""}
-        </a>
-        </nav>
+        ${if cleanUp then nav else ""}
         <div class="container">
-        <textarea type="text/markdown" id="content-md">
+        <textarea type="text/markdown" id="content-md" spellcheck="false">
         ${content}
         </textarea>
         <div id="content-html"></div>
         </div>
 
         ${if cleanUp then ''
-        <div style="width: 100%; height: 2em;"></div>
+        <div style="width: 100%; height: 1em;"></div>
         '' else ''
         <div style="width: 100%; height: 20em;"></div>
         ''}
@@ -260,7 +100,8 @@ let
                 const content = document.querySelector("#content-md").value
                 const parsed = reader.parse(content)
                 const rendered = writer.render(parsed)
-                document.querySelector("#content-html").innerHTML = rendered
+                document.querySelector("#content-html").innerHTML =
+                    `${if !cleanUp then nav else ""}` + rendered
 
                 // Set title from <h1>
                 const firstHeading = document.querySelector("#content-html").querySelector("h1")
@@ -297,6 +138,10 @@ let
                         throwOnError: true
                     }
                 )
+
+
+                // Custom JS
+                ${js}
             }
 
             effect()
