@@ -129,3 +129,42 @@ It may be repeatable for a few months,
 but will eventually stop building.
 Then I need to keep the container image,
 and I can only compose them from a limited number of layers.
+
+## Issues
+
+On first run, sometimes I get this
+
+```
+README.html
+[0608/155004.523967:ERROR:bus.cc(407)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[0608/155004.525476:ERROR:bus.cc(407)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[0608/155004.525516:ERROR:bus.cc(407)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+[0608/155004.528611:INFO:config_dir_policy_loader.cc(118)] Skipping mandatory platform policies because no policy file was found at: /etc/chromium/policies/managed
+[0608/155004.528627:INFO:config_dir_policy_loader.cc(118)] Skipping recommended platform policies because no policy file was found at: /etc/chromium/policies/recommended
+[0608/155004.543066:WARNING:bluez_dbus_manager.cc(248)] Floss manager not present, cannot set Floss enable/disable.
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+[0608/155004.577461:WARNING:sandbox_linux.cc(436)] InitializeSandbox() called with multiple threads in process gpu-process.
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /irClean.html HTTP/1.1" 200 -
+[0608/155004.693809:INFO:CONSOLE(8)] "Error parsing a meta element's content: ';' is not a valid key-value pair separator. Please use ',' instead.", source: http://0.0.0.0:8000/irClean.html (8)
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/b47sgp0q2m2pqvavd9kisp1jnzpc8zzw-sunburst.min.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/45rfwqpr6mjkaj5a6i16zckzh9cg6byi-style.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/lg8sycxbp06f23jgb606xqgzh2jcpa37-source/katex.min.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/s3p5fx7x826q2n60ssbxv9gr29zqiymd-highlight.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/lg8sycxbp06f23jgb606xqgzh2jcpa37-source/katex.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/lg8sycxbp06f23jgb606xqgzh2jcpa37-source/contrib/auto-render.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/83hgh13grvg42rrljbrwfhfn1067i9kq-commonmark.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jun/2024 15:50:04] "GET /nix/store/j8wrxj09v5p1s8pvl9r340nyw31pkck3-nix.min.js HTTP/1.1" 200 -
+[0608/155004.753192:INFO:CONSOLE(173)] "Running effect", source: http://0.0.0.0:8000/irClean.html (173)
+```
+
+Not sure which of these is the error,
+as it seems different thread keeps logging
+after the actual error is thrown.
+Re-running the build fixes it forever.
+Very weird, I'll try to make it single-threaded
+and debug further :P
+
