@@ -67,10 +67,10 @@ let
         <body>
         ${if cleanUp then nav else ""}
         <div class="container">
+        <div id="content-html"></div>
         <textarea type="text/markdown" id="content-md" spellcheck="false">
         ${content}
         </textarea>
-        <div id="content-html"></div>
         </div>
 
         ${if cleanUp then ''
