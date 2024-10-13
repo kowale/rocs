@@ -15,12 +15,14 @@
             default = buildSite {
                 inherit pkgs;
                 root = self.outPath;
+                local = "lib";
                 css = ''/* extra css */'';
                 js = ''// extra effect'';
             };
 
             forPages = buildSite {
                 inherit pkgs;
+                local = "lib";
                 root = self.outPath;
                 rootDir = "/rocs";
             };

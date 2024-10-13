@@ -1,13 +1,61 @@
 # Rocs
 
-Rocs is an attempt at constructing
-"reproducible while editable" docs,
-powered by Nix and web browsers.
+Rocs is an experiment in putting together
+
+- CommonMark
+- Web browsers
+- Nix
+- Git
+
+<aside>
+The "r" stands for
+readable, repeatable,
+sometimes reproducible.
+The "ocs" stands for docs.
+</aside>
+
+![rocs dataflow](lib/picture.png)
+
+<!--
+digraph Rocs {
+  rankdir=LR
+  CommonMark -> {"HTML sans JS", "HTML sin JS"} -> Diff
+  Diff -> Inbox -> Git -> CommonMark
+}
+-->
+
+## Workflow
+
+Here's a workflow I have in mind.
+Content is written in CommonMark.
+Syntax extensions much degrade gracefully;
+both source and any render should be legible.
+
+<aside>
+Markdown documentation in the wild
+will likely use non-CommonMark syntax
+like tables or adamonitions.
+It would be nice to address this.
+Render anything (sacrificing editability),
+normalise to CommonMark,
+or replace weirdness with stylish placeholders.
+</aside>
+
+Two versions of HTML are generated for each commit:
+HTML without JS for viewing,
+and HTML with JS for editing.
+Former is a result of running latter once.
+
+If an anonymous user makes an edit,
+they see a universal diff relative to the original commit.
+A public inbox collects anonymous contributions for review.
+A diff may be submitted (in JS, or manually) to a public inbox.
+At a later date, authors may review proposed changes and merge in Git.
+A new commit becomes source of truth, and the cycle repeats.
 
 ## Example
 
-To add to your repository,
-if you are using flakes
+If you use flakes
 
 ```nix
 {
@@ -74,10 +122,12 @@ The output should be a directory subtree
 that contains the processed file.
 For example, a/b/c.md becomes a/b/c.html.
 
+<aside>
 As fileToDrv is a Nix expression,
 it can do evaluation prior to build.
 For instance, template Markdown into HTML
 that renders itself with JavaScript.
+</aside>
 
 The output is a derivation
 that depends on all subtrees.
@@ -120,6 +170,7 @@ it will build or substitute
 a concrete snapshot of every input,
 down to libc, in a strong sandbox.
 
+<aside>
 If I depend on Chromium in Docker,
 I get a binary blob with no context,
 dynamically linked to some arbitrary stuff,
@@ -129,6 +180,7 @@ It may be repeatable for a few months,
 but will eventually stop building.
 Then I need to keep the container image,
 and I can only compose them from a limited number of layers.
+</aside>
 
 ## Issues
 
