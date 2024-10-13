@@ -40,14 +40,14 @@ a:hover {
   text-decoration: none;
 }
 
-aside {
+.sidenote {
   opacity: 90%;
   margin-top: 1em;
   shape-outside: content-box;
 }
 
 @media (min-width: 1000px) {
-  aside {
+  .sidenote {
     float: right;
     width: 21em;
     margin-right: -25em;

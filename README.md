@@ -7,14 +7,9 @@ Rocs is an experiment in putting together
 - Nix
 - Git
 
-<aside>
-The "r" stands for
-readable, repeatable,
-sometimes reproducible.
+The "r" stands for repeatable, reproducible,
+and readable (in source and in render).
 The "ocs" stands for docs.
-</aside>
-
-![rocs dataflow](lib/picture.png)
 
 <!--
 digraph Rocs {
@@ -23,6 +18,7 @@ digraph Rocs {
   Diff -> Inbox -> Git -> CommonMark
 }
 -->
+![rocs dataflow](lib/picture.png)
 
 ## Workflow
 
@@ -31,7 +27,7 @@ Content is written in CommonMark.
 Syntax extensions much degrade gracefully;
 both source and any render should be legible.
 
-<aside>
+<div class="sidenote">
 Markdown documentation in the wild
 will likely use non-CommonMark syntax
 like tables or adamonitions.
@@ -39,7 +35,7 @@ It would be nice to address this.
 Render anything (sacrificing editability),
 normalise to CommonMark,
 or replace weirdness with stylish placeholders.
-</aside>
+</div>
 
 Two versions of HTML are generated for each commit:
 HTML without JS for viewing,
@@ -122,12 +118,12 @@ The output should be a directory subtree
 that contains the processed file.
 For example, a/b/c.md becomes a/b/c.html.
 
-<aside>
+<div class="sidenote">
 As fileToDrv is a Nix expression,
 it can do evaluation prior to build.
 For instance, template Markdown into HTML
 that renders itself with JavaScript.
-</aside>
+</div>
 
 The output is a derivation
 that depends on all subtrees.
@@ -170,7 +166,7 @@ it will build or substitute
 a concrete snapshot of every input,
 down to libc, in a strong sandbox.
 
-<aside>
+<div class="sidenote">
 If I depend on Chromium in Docker,
 I get a binary blob with no context,
 dynamically linked to some arbitrary stuff,
@@ -180,7 +176,7 @@ It may be repeatable for a few months,
 but will eventually stop building.
 Then I need to keep the container image,
 and I can only compose them from a limited number of layers.
-</aside>
+</div>
 
 ## Issues
 
