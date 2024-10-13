@@ -194,6 +194,8 @@ in
         # Chromium reads impure location at runtime
         FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
         FONTCONFIG_PATH="${pkgs.fontconfig.out}/etc/fonts/";
+        XDG_CONFIG_HOME = "/tmp/.chromium";
+        XDG_CACHE_HOME = "/tmp/.chromium";
 
         buildCommand = ''
             set -eou pipefail
