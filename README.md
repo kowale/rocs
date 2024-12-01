@@ -14,11 +14,11 @@ The "ocs" stands for docs.
 <!--
 digraph Rocs {
   rankdir=LR
-  CommonMark -> {"HTML sans JS", "HTML sin JS"} -> Diff
+  CommonMark -> {"HTML with JS", "HTML without JS"} -> Diff
   Diff -> Inbox -> Git -> CommonMark
 }
 -->
-![rocs dataflow](lib/picture.png)
+![rocs dataflow](lib/picture.svg)
 
 ## Workflow
 
@@ -27,7 +27,6 @@ Content is written in CommonMark.
 Syntax extensions much degrade gracefully;
 both source and any render should be legible.
 
-<div class="sidenote">
 Markdown documentation in the wild
 will likely use non-CommonMark syntax
 like tables or adamonitions.
@@ -35,7 +34,6 @@ It would be nice to address this.
 Render anything (sacrificing editability),
 normalise to CommonMark,
 or replace weirdness with stylish placeholders.
-</div>
 
 Two versions of HTML are generated for each commit:
 HTML without JS for viewing,
@@ -124,6 +122,7 @@ it can do evaluation prior to build.
 For instance, template Markdown into HTML
 that renders itself with JavaScript.
 </div>
+
 
 The output is a derivation
 that depends on all subtrees.
