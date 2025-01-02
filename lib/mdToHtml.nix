@@ -34,13 +34,15 @@ let
     htmlTemplate = { content, rootDir, dir, name, cleanUp }: let nav = ''
 
         <nav>
-        <a style="text-decoration: none;" href="${rootDir}/index.html">${emoji}</a>
-        &mdash;
+        <a href="${rootDir}/index.html">Index</a>
+        &bull;
         <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
-        ${if cleanUp then "&mdash;" else ""}
+        <!--
+        ${if cleanUp then "&bull;" else ""}
         <a href='${if cleanUp then "${rootDir}/_${dir}/${name}" else ""}'>
         ${if cleanUp then "Edit" else ""}
         </a>
+        -->
         </nav>
         '';
 

@@ -1,63 +1,36 @@
+body {
+  margin: 1em;
+  line-height: 1.5;
+}
+
+p {
+    font-size: 12pt;
+    text-align: justify;
+}
+
+#content-html {
+    flex: 1;
+    width: 50%;
+    max-width: 65ch;
+}
+
 #content-md {
     flex: 1;
     width: 50%;
-    max-width: 35em;
     overflow: hidden;
     resize: none;
     border: 0;
 }
 
-#content-html {
-    flex: 1;
-    max-width: 35em;
-    width: 50%;
-}
-
 .container {
     display: flex;
     flex-direction: row;
+    justify-content: left;
     gap: 1em;
-}
-
-body {
-    line-height: 1.4;
-    padding: 1em;
-    margin: 1em;
-    font-family: sans-serif;
-    color: whitesmoke;
-    background: black;
-}
-
-a {
-  color: whitesmoke;
-  text-decoration: none;
-  padding: 1px;
-}
-
-a:hover {
-  color: black;
-  background: whitesmoke;
-  text-decoration: none;
-}
-
-.sidenote {
-  opacity: 90%;
-  margin-top: 1em;
-  shape-outside: content-box;
-}
-
-@media (min-width: 1000px) {
-  .sidenote {
-    float: right;
-    width: 21em;
-    margin-right: -25em;
-  }
 }
 
 code {
   font-size: 1.1em;
-  color: whitesmoke;
-  background: #0e0e0e;
   padding: 0.1em;
   border-radius: 2px;
 }
@@ -81,15 +54,18 @@ textarea:not([rows]) {
   margin: 0.5em;
 }
 
--- https://www.reasonable.work/colors/#colors
+/* https://www.reasonable.work/colors/#colors */
 * {
   --white: #ffffff;
   --gray: #fefefe;
   --black: #000000;
 }
 
--- https://www.joshwcomeau.com/css/custom-css-reset/
--- https://piccalil.li/blog/a-more-modern-css-reset/
+/*
+https://www.joshwcomeau.com/css/custom-css-reset/
+https://piccalil.li/blog/a-more-modern-css-reset/
+*/
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -98,8 +74,8 @@ textarea:not([rows]) {
 }
 img, picture, video {
   max-width: 100%;
-  margin: 0 auto;
   display: block;
+  margin: 0 auto;
 }
 input, button, textarea, select {
   font: inherit;

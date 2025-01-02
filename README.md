@@ -1,5 +1,56 @@
 # Rocs
 
+Experimental static site generator in Nix.
+Markdown files are read at evaluation
+such that they build independently.
+Each build runs a headless Chromium,
+the final result is self-contained,
+including highlight.js and KaTeX.
+
+## Example
+
+```sh
+nix build github:kowale/rocs -vv -L
+```
+
+You can open `result/index.html` in a browser, or
+serve it over HTTP
+
+```sh
+python -m http.server -d result
+```
+
+You can also unlink it with tar or cp
+if you need real files to deploy.
+
+```sh
+tar czfh result.tar.gz result/
+```
+
+A minimal flake could be
+
+```nix
+{
+    inputs = {
+        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+        rocs.url = "github:kowale/rocs";
+    };
+    outputs = { self, nixpkgs, rocs, ... } @ inputs:
+    let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs { inherit system; };
+
+    in {
+        packages.${system}.docs = rocs.lib.buildSite {
+            inherit pkgs;
+            root = ./.;
+        };
+    }
+}
+```
+
+<!--
+
 Rocs is an experiment in putting together
 
 - CommonMark
@@ -10,15 +61,6 @@ Rocs is an experiment in putting together
 The "r" stands for repeatable, reproducible,
 and readable (in source and in render).
 The "ocs" stands for docs.
-
-<!--
-digraph Rocs {
-  rankdir=LR
-  CommonMark -> {"HTML with JS", "HTML without JS"} -> Diff
-  Diff -> Inbox -> Git -> CommonMark
-}
--->
-![rocs dataflow](lib/picture.svg)
 
 ## Workflow
 
@@ -47,51 +89,6 @@ A diff may be submitted (in JS, or manually) to a public inbox.
 At a later date, authors may review proposed changes and merge in Git.
 A new commit becomes source of truth, and the cycle repeats.
 
-## Example
-
-If you use flakes
-
-```nix
-{
-    inputs = {
-        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-        rocs.url = "github:kowale/rocs";
-    };
-    outputs = { self, nixpkgs, rocs, ... } @ inputs:
-    let
-        system = "x86_64-linux";
-        pkgs = import nixpkgs { inherit system; };
-
-    in {
-        packages.${system}.docs = rocs.lib.buildSite {
-            inherit pkgs;
-            root = ./.;
-        };
-    }
-}
-```
-
-To build docs in this repository
-
-```sh
-nix build github:kowale/rocs -vv
-```
-
-The `result` is a symlink to the web root.
-You can open `result/index.html` in a browser,
-or serve it over HTTP.
-
-```
-python3 -m http.server 8000 -d result/
-```
-
-We can realise it with tar or cp
-if we need real files to deploy.
-
-```sh
-tar czfh result.tar.gz result/
-```
-
 If you change one file,
 only it will need a rebuild.
 
@@ -116,13 +113,10 @@ The output should be a directory subtree
 that contains the processed file.
 For example, a/b/c.md becomes a/b/c.html.
 
-<div class="sidenote">
 As fileToDrv is a Nix expression,
 it can do evaluation prior to build.
 For instance, template Markdown into HTML
 that renders itself with JavaScript.
-</div>
-
 
 The output is a derivation
 that depends on all subtrees.
@@ -165,7 +159,6 @@ it will build or substitute
 a concrete snapshot of every input,
 down to libc, in a strong sandbox.
 
-<div class="sidenote">
 If I depend on Chromium in Docker,
 I get a binary blob with no context,
 dynamically linked to some arbitrary stuff,
@@ -175,7 +168,6 @@ It may be repeatable for a few months,
 but will eventually stop building.
 Then I need to keep the container image,
 and I can only compose them from a limited number of layers.
-</div>
 
 ## Issues
 
@@ -215,3 +207,4 @@ Re-running the build fixes it forever.
 Very weird, I'll try to make it single-threaded
 and debug further :P
 
+-->
