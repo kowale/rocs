@@ -1,7 +1,10 @@
 body {
   margin: 1em;
+  /* font-size: 16px; */
+}
+
+p, ul, ol, nav, footer {
   line-height: 1.5;
-  font-size: 16px;
 }
 
 p {
@@ -23,10 +26,18 @@ p {
   hyphenate-limit-zone: 8%;
 }
 
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 1em;
+}
+
 #content-html {
     flex: 1;
     width: 50%;
     max-width: 65ch;
+    border: 0;
 }
 
 #content-md {
@@ -37,32 +48,22 @@ p {
     border: 0;
 }
 
-.container {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    gap: 1em;
-}
-
-code {
-  padding: 0.1em;
-}
+/* code { */
+/*   padding: 0.1em; */
+/* } */
 
 textarea {
-  font-family: monospace;
-  color: blue;
-  background: yellow;
-  overflow-y: scroll;
+  color: gray;
   resize: none;
+  overflow-y: scroll;
+  font-family: monospace !important;
 }
 
 textarea:not([rows]) {
   min-height: 10em;
-  padding: 0.5em;
-  margin: 0.5em;
 }
 
-/* https://www.reasonable.work/colors/#colors */
+/* TODO: https://www.reasonable.work/colors/#colors */
 * {
   --white: #ffffff;
   --gray: #fefefe;
@@ -85,7 +86,7 @@ img, picture, video {
   display: block;
   margin: 0 auto;
 }
-input, button, textarea, select {
+input, button, select {
   font: inherit;
 }
 html {

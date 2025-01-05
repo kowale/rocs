@@ -37,11 +37,15 @@ let
         <a href="${rootDir}/index.html">Index</a>
         &bull;
         <a href="${rootDir}${dir}/${name}">${rootDir}${dir}/${name}</a>
-        <!--
         ${if cleanUp then "&bull;" else ""}
         <a href='${if cleanUp then "${rootDir}/_${dir}/${name}" else ""}'>
         ${if cleanUp then "Edit" else ""}
         </a>
+        <!--
+        <br/>
+        Author
+        &bull;
+        Last edit
         -->
         </nav>
         '';
@@ -72,12 +76,6 @@ let
         <div id="content-html"></div>
         <textarea type="text/markdown" id="content-md" spellcheck="false">${content}</textarea>
         </div>
-
-        ${if cleanUp then ''
-        <div style="width: 100%; height: 5em;"></div>
-        '' else ''
-        <div style="width: 100%; height: 20em;"></div>
-        ''}
 
         ${let prefix = if cleanUp then "" else rootDir; in ''
         <script id="hl-load" src="${prefix}${imports."highlight.min.js".outPath}"></script>
@@ -146,11 +144,11 @@ let
 
             effect()
 
-            // Refresh every 500ms for live editing
+            // Refresh every second for ~live editing
             // "onchange" events only apply after focus is off
             // TODO: use something nicer like CodeMirror
             if (${if cleanUp then "false" else "true"}) {
-                setInterval(effect, 500)
+                setInterval(effect, 1000)
             }
 
             if (${if cleanUp then "true" else "false"}) {
