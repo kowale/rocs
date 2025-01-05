@@ -1,11 +1,26 @@
 body {
   margin: 1em;
   line-height: 1.5;
+  font-size: 16px;
 }
 
 p {
-    font-size: 12pt;
-    text-align: justify;
+  text-align: justify;
+
+  /* https://clagnut.com/blog/2395/ */
+  -webkit-hyphens: auto;
+  -webkit-hyphenate-limit-before: 3;
+  -webkit-hyphenate-limit-after: 3;
+  -webkit-hyphenate-limit-chars: 6 3 3;
+  -webkit-hyphenate-limit-lines: 2;
+  -webkit-hyphenate-limit-last: always;
+  -webkit-hyphenate-limit-zone: 8%;
+
+  hyphens: auto;
+  hyphenate-limit-chars: 6 3 3;
+  hyphenate-limit-lines: 2;
+  hyphenate-limit-last: always;
+  hyphenate-limit-zone: 8%;
 }
 
 #content-html {
@@ -30,20 +45,13 @@ p {
 }
 
 code {
-  font-size: 1.1em;
   padding: 0.1em;
-  border-radius: 2px;
-}
-
-pre > code {
-  background: #0e0e0e !important;
 }
 
 textarea {
-  font-size: 1.1em;
   font-family: monospace;
-  color: whitesmoke;
-  background: black;
+  color: blue;
+  background: yellow;
   overflow-y: scroll;
   resize: none;
 }

@@ -49,7 +49,7 @@ let
     in ''
 
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
         <meta charset="utf-8">
         <meta name="path" content="${rootDir}${dir}/${name}">
@@ -70,13 +70,11 @@ let
         ${if cleanUp then nav else ""}
         <div class="container">
         <div id="content-html"></div>
-        <textarea type="text/markdown" id="content-md" spellcheck="false">
-        ${content}
-        </textarea>
+        <textarea type="text/markdown" id="content-md" spellcheck="false">${content}</textarea>
         </div>
 
         ${if cleanUp then ''
-        <div style="width: 100%; height: 1em;"></div>
+        <div style="width: 100%; height: 5em;"></div>
         '' else ''
         <div style="width: 100%; height: 20em;"></div>
         ''}
