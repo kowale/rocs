@@ -1,14 +1,14 @@
 /*
 
-This file implements fileToDrv used in buildSite.
-Returns a derivation for a composable subtree.
-Suppose we want to render ./some/thing.md
-to kowale.github.io/rocs/some/thing.html
+  This file implements fileToDrv used in buildSite.
+  Returns a derivation for a composable subtree.
+  Suppose we want to render ./some/thing.md
+  to kowale.github.io/rocs/some/thing.html
 
-- `content` is text of ./some/thing.md/
-- `rootDir` is where we deploy - rocs/
-- `dir` is target location - some/
-- `name` is target file name - thing.html
+  - `content` is text of ./some/thing.md/
+  - `rootDir` is where we deploy - rocs/
+  - `dir` is target location - some/
+  - `name` is target file name - thing.html
 
 */
 
@@ -18,20 +18,22 @@ to kowale.github.io/rocs/some/thing.html
 
 let
 
-    iconSvgXml = ''
-        <svg
-            xmlns=%22http://www.w3.org/2000/svg%22
-            viewBox=%220 0 100 100%22
-        >
-        <text y=%22.9em%22 font-size=%2290%22>${emoji}</text>
-        </svg>
-    '';
+  iconSvgXml = ''
+    <svg
+        xmlns=%22http://www.w3.org/2000/svg%22
+        viewBox=%220 0 100 100%22
+    >
+    <text y=%22.9em%22 font-size=%2290%22>${emoji}</text>
+    </svg>
+  '';
 
-    # TODO: add sha384 of files to their integrity field
+  # TODO: add sha384 of files to their integrity field
 
-    imports = (builtins.elemAt (pkgs.callPackage ./imports.nix {}) 0).imports;
+  imports = (builtins.elemAt (pkgs.callPackage ./imports.nix { }) 0).imports;
 
-    htmlTemplate = { content, rootDir, dir, name, cleanUp }: let nav = ''
+  htmlTemplate = { content, rootDir, dir, name, cleanUp }:
+    let
+      nav = ''
 
         <nav>
         <a href="${rootDir}/index.html">Index</a>
@@ -50,7 +52,8 @@ let
         </nav>
         '';
 
-    in ''
+    in
+    ''
 
         <!DOCTYPE html>
         <html lang="en">
@@ -169,95 +172,95 @@ let
         </html>
     '';
 
-    importsJoin = pkgs.symlinkJoin { name = "imports"; paths = (pkgs.callPackage ./imports.nix {}); };
+  importsJoin = pkgs.symlinkJoin { name = "imports"; paths = (pkgs.callPackage ./imports.nix { }); };
 
 in
 
-    pkgs.stdenv.mkDerivation {
+pkgs.stdenv.mkDerivation {
 
-        inherit name content rootDir dir importsJoin;
+  inherit name content rootDir dir importsJoin;
 
-        ir = htmlTemplate { inherit content rootDir dir name; cleanUp = false; };
-        irClean = htmlTemplate { inherit content rootDir dir name; cleanUp = true; };
+  ir = htmlTemplate { inherit content rootDir dir name; cleanUp = false; };
+  irClean = htmlTemplate { inherit content rootDir dir name; cleanUp = true; };
 
-        # Stop asking cache for builds
-        allowSubstitutes = false;
+  # Stop asking cache for builds
+  allowSubstitutes = false;
 
-        # Content may be too big for env
-        passAsFile = [ "content" "ir" "irClean" "importsJoin" ];
+  # Content may be too big for env
+  passAsFile = [ "content" "ir" "irClean" "importsJoin" ];
 
-        # TODO: firefox
-        nativeBuildInputs = with pkgs; [ chromium ];
+  # TODO: firefox
+  nativeBuildInputs = with pkgs; [ chromium ];
 
-        # Chromium reads impure location at runtime
-        FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
-        FONTCONFIG_PATH="${pkgs.fontconfig.out}/etc/fonts/";
-        XDG_CONFIG_HOME = "/tmp/.chromium";
-        XDG_CACHE_HOME = "/tmp/.chromium";
+  # Chromium reads impure location at runtime
+  FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
+  FONTCONFIG_PATH = "${pkgs.fontconfig.out}/etc/fonts/";
+  XDG_CONFIG_HOME = "/tmp/.chromium";
+  XDG_CACHE_HOME = "/tmp/.chromium";
 
-        buildCommand = ''
-            set -eou pipefail
+  buildCommand = ''
+    set -eou pipefail
 
-            echo $dir $name
+    echo $dir $name
 
-            mkdir -p $out/$dir
-            mkdir -p $out/_/$dir
+    mkdir -p $out/$dir
+    mkdir -p $out/_/$dir
 
-            cp $irPath ir.html
-            cp $irCleanPath irClean.html
-            cp ir.html $out/_/$dir/$name
+    cp $irPath ir.html
+    cp $irCleanPath irClean.html
+    cp ir.html $out/_/$dir/$name
 
-            ln -s ${toString importsJoin}/nix nix
+    ln -s ${toString importsJoin}/nix nix
 
-            ${pkgs.python3}/bin/python3 -m http.server 8000 &
+    ${pkgs.python3}/bin/python3 -m http.server 8000 &
 
-            chromium \
-                --no-first-run \
-                --no-default-browser-check \
-                --user-data-dir=/tmp/chrome-data \
-                --disable-extensions \
-                --disable-background-networking \
-                --disable-background-timer-throttling \
-                --disable-backgrounding-occluded-windows \
-                --disable-renderer-backgrounding \
-                --disable-breakpad \
-                --disable-client-side-phishing-detection \
-                --disable-crash-reporter \
-                --disable-default-apps \
-                --disable-dev-shm-usage \
-                --disable-device-discovery-notifications \
-                --disable-namespace-sandbox \
-                --disable-translate \
-                --autoplay-policy=no-user-gesture-required \
-                --no-sandbox \
-                --no-zygote \
-                --enable-webgl \
-                --disable-dev-shm-usage \
-                --disable-gl-drawing-for-tests \
-                --hide-scrollbars \
-                --mute-audio \
-                --no-first-run \
-                --disable-infobars \
-                --disable-breakpad \
-                --disable-setuid-sandbox \
-                --disable-features=site-per-process \
-                --disable-mobile-emulation \
-                --ignore-certificate-errors \
-                --disable-web-security \
-                --headless \
-                --disable-gpu \
-                --dump-dom \
-                http://0.0.0.0:8000/irClean.html | ${pkgs.sd}/bin/sd 'http://0.0.0.0:8000' "" > tmp
+    chromium \
+        --no-first-run \
+        --no-default-browser-check \
+        --user-data-dir=/tmp/chrome-data \
+        --disable-extensions \
+        --disable-background-networking \
+        --disable-background-timer-throttling \
+        --disable-backgrounding-occluded-windows \
+        --disable-renderer-backgrounding \
+        --disable-breakpad \
+        --disable-client-side-phishing-detection \
+        --disable-crash-reporter \
+        --disable-default-apps \
+        --disable-dev-shm-usage \
+        --disable-device-discovery-notifications \
+        --disable-namespace-sandbox \
+        --disable-translate \
+        --autoplay-policy=no-user-gesture-required \
+        --no-sandbox \
+        --no-zygote \
+        --enable-webgl \
+        --disable-dev-shm-usage \
+        --disable-gl-drawing-for-tests \
+        --hide-scrollbars \
+        --mute-audio \
+        --no-first-run \
+        --disable-infobars \
+        --disable-breakpad \
+        --disable-setuid-sandbox \
+        --disable-features=site-per-process \
+        --disable-mobile-emulation \
+        --ignore-certificate-errors \
+        --disable-web-security \
+        --headless \
+        --disable-gpu \
+        --dump-dom \
+        http://0.0.0.0:8000/irClean.html | ${pkgs.sd}/bin/sd 'http://0.0.0.0:8000' "" > tmp
 
-                # Mysteriously Chromium sometimes returns only <html><body></body></html>
-                if (( $(cat tmp | wc -c) < 100 )); then
-                    exit 1
-                fi
+        # Mysteriously Chromium sometimes returns only <html><body></body></html>
+        if (( $(cat tmp | wc -c) < 100 )); then
+            exit 1
+        fi
 
-                cat tmp > $out/$dir/$name
-                ${if (dir == "" && name == "README.html") then "
-                    cat tmp > $out/index.html
-                " else "" }
-                kill $!
-        '';
-    }
+        cat tmp > $out/$dir/$name
+        ${if (dir == "" && name == "README.html") then "
+            cat tmp > $out/index.html
+        " else "" }
+        kill $!
+  '';
+}

@@ -31,7 +31,7 @@ A minimal flake example (see flake.nix for more)
             inherit pkgs;
             root = self.outPath;
         };
-    }
+    };
 }
 ```
 
