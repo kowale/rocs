@@ -17,20 +17,22 @@ A minimal flake example (see flake.nix for more)
 
 ```nix
 {
-    inputs = {
-        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-        rocs.url = "github:kowale/rocs";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rocs = {
+      url = "github:kowale/rocs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    outputs = { self, nixpkgs, rocs, ... } @ inputs:
+  };
+  outputs = { self, nixpkgs, rocs, ... } @ inputs:
     let
-        system = "x86_64-linux";
-        pkgs = import nixpkgs { inherit system; };
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+    in
+    {
 
-    in {
-        packages.${system}.default = rocs.lib.buildSite {
-            inherit pkgs;
-            root = self.outPath;
-        };
+      # nix build && python3 -m http.server -d result
+      packages.${system}.default = rocs.lib.buildSiteAt "";
     };
 }
 ```
