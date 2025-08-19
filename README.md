@@ -27,9 +27,9 @@ A minimal flake example (see flake.nix for more)
         pkgs = import nixpkgs { inherit system; };
 
     in {
-        packages.${system}.docs = rocs.lib.buildSite {
+        packages.${system}.default = rocs.lib.buildSite {
             inherit pkgs;
-            root = ./.;
+            root = self.outPath;
         };
     }
 }
@@ -49,6 +49,16 @@ To avoid heavy re-rendering of all files on any change,
 source files are evaluated into independent derivations
 using forbidden magic of `unsafeDiscardStringContext`.
 
+```nix
+# Remove context from string to avoid pulling whole tree as dependency
+dir = unsafeDiscardStringContext (
+  replaceStrings
+  [ "${root}" ]
+  [ "" ]
+  (toString path)
+);
+```
+
 Directory structure mirrors that of the repository.
 For example, hello.md is rendered to hello.html.
 In an attempt to support directories,
@@ -58,7 +68,7 @@ Need auto-discovered page index? Generate in pre-commit.
 > I would like to render with Firefox/Gecko
 > but I couldn't get it to work :( Soon TM
 
-### Dependencies served at `/nix/store`
+### Dependencies served at `/nix/store` path
 
 Dependencies defined in `./lib/imports.nix`
 are vendored at `/nix/store`
