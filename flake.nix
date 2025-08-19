@@ -1,45 +1,30 @@
 {
-    inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    outputs = { self, nixpkgs }:
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  outputs = { self, nixpkgs }:
 
     let
 
-        system = "x86_64-linux";
-        pkgs = import nixpkgs { inherit system; };
-        buildSite = import ./lib/buildSite.nix;
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      buildSite = import ./lib/buildSite.nix;
+      buildSiteAt = rootDir: buildSite {
+        inherit pkgs rootDir;
+        root = self.outPath;
+        local = "priv";
+        css = ''/* extra css */'';
+        js = ''// extra js'';
+      };
 
-    in {
+    in
+    {
+      packages.${system} = {
+        # nix build && python3 -m http.server -d result
+        default = buildSiteAt "";
 
-        packages.${system} = {
+        # for github pages
+        rocs = buildSiteAt "rocs";
+      };
 
-            default = buildSite {
-                inherit pkgs;
-                root = self.outPath;
-                local = "lib";
-                css = ''/* extra css */'';
-                js = ''// extra effect'';
-            };
-
-            forPages = buildSite {
-                inherit pkgs;
-                local = "lib";
-                root = self.outPath;
-                rootDir = "/rocs";
-            };
-        };
-
-        apps.${system}.default = {
-            type = "app";
-            program = (pkgs.writeShellScript "serveFiles" ''
-
-                cd ${self.outputs.packages.${system}.default.outPath}
-                ${pkgs.python3}/bin/python -m http.server 8985
-
-            '').outPath;
-        };
-
-        # Can I ship functions in a flake?
-        lib = { inherit buildSite; };
-
+      lib = { inherit buildSiteAt; };
     };
 }
