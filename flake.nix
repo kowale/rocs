@@ -22,7 +22,7 @@
         default = buildSiteAt "";
 
         # for github pages
-        rocs = buildSiteAt "rocs";
+        forPages = buildSiteAt "/rocs";
       };
 
       lib = { inherit buildSiteAt; };
