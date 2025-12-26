@@ -25,6 +25,6 @@
         forPages = buildSiteAt "/rocs";
       };
 
-      lib = { inherit buildSiteAt; };
+      lib = { inherit buildSite buildSiteAt; };
     };
 }

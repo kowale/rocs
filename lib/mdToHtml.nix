@@ -250,6 +250,8 @@ pkgs.stdenv.mkDerivation {
         --headless \
         --disable-gpu \
         --dump-dom \
+        --virtual-time-budget=10000 \
+        --run-all-compositor-stages-before-draw \
         http://0.0.0.0:8000/irClean.html | ${pkgs.sd}/bin/sd 'http://0.0.0.0:8000' "" > tmp
 
         # Mysteriously Chromium sometimes returns only <html><body></body></html>
